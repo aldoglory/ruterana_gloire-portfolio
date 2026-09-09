@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cv — ruterana-gloire — Visual Studio Code</title>
+<meta name="description" content="Ruterana Gloire's CV, presented as a VS Code editor window.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1e1e1e;
+    --bg-side:#181818;
+    --bg-tab:#2d2d2d;
+    --bg-tab-active:#1e1e1e;
+    --bg-titlebar:#252526;
+    --bg-status:#007acc;
+    --line:#2a2a2a;
+    --border:#3c3c3c;
+    --text:#d4d4d4;
+    --text-dim:#6a6a6a;
+    --linenum:#5a5a5a;
+    --sel:#264f78;
+    --white:#e8e8e8;
+
+    --c-keyword:#569cd6;
+    --c-string:#ce9178;
+    --c-comment:#6a9955;
+    --c-func:#dcdcaa;
+    --c-prop:#9cdcfe;
+    --c-type:#4ec9b0;
+    --c-const:#4fc1ff;
+    --c-punct:#d4d4d4;
+    --c-num:#b5cea8;
+    --c-tag:#569cd6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:#111; }
+  body{
+    font-family:'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:26px 16px 60px;
+  }
+  a{color:inherit;}
+
+  .editor{
+    width:100%;
+    max-width:1180px;
+    background:var(--bg);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 30px 90px rgba(0,0,0,.55), 0 0 0 1px var(--border);
+  }
+
+  /* title bar */
+  .titlebar{
+    background:var(--bg-titlebar);
+    padding:9px 14px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .traffic{ display:flex; gap:7px; flex:none; }
+  .traffic span{ width:11px; height:11px; border-radius:50%; display:block; }
+  .traffic .r{ background:#ff5f56; }
+  .traffic .y{ background:#ffbd2e; }
+  .traffic .g{ background:#27c93f; }
+  .titlebar-title{
+    flex:1;
+    text-align:center;
+    font-size:12px;
+    color:var(--text-dim);
+    font-family:'Inter',sans-serif;
+    letter-spacing:.01em;
+  }
+  .titlebar-actions{
+    flex:none;
+    display:flex;
+    gap:10px;
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+  }
+  .titlebar-actions a{
+    color:var(--text-dim);
+    text-decoration:none;
+    padding:4px 10px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .titlebar-actions a:hover{ color:var(--white); border-color:#5a5a5a; }
+
+  .body-row{ display:flex; height:640px; }
+
+  /* sidebar */
+  .sidebar{
+    width:210px;
+    flex:none;
+    background:var(--bg-side);
+    border-right:1px solid var(--border);
+    padding:14px 0;
+  }
+  .sidebar-label{
+    font-family:'Inter',sans-serif;
+    font-size:10.5px;
+    letter-spacing:.08em;
+    color:var(--text-dim);
+    padding:4px 18px 10px;
+  }
+  .file-list{ list-style:none; margin:0; padding:0; }
+  .file-list li a{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 18px;
+    font-size:12.5px;
+    text-decoration:none;
+    color:var(--text-dim);
+    border-left:2px solid transparent;
+    transition:color .15s ease, background .15s ease;
+  }
+  .file-list li a:hover{ color:var(--white); background:#232323; }
+  .file-list li a.active{ color:var(--white); background:#2a2d2e; border-left-color:#569cd6; }
+  .file-list .dot{ width:7px; height:7px; border-radius:50%; flex:none; }
+  .dot-md{ background:#519aba; }
+  .dot-js{ background:#dcdcaa; }
+  .dot-json{ background:#cbcb41; }
+  .dot-env{ background:#a1887f; }
+
+  .sidebar-cta{
+    margin:22px 14px 0;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .sidebar-cta a{
+    font-family:'Inter',sans-serif;
+    font-size:11.5px;
+    text-align:center;
+    text-decoration:none;
+    padding:8px 10px;
+    border-radius:5px;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .sidebar-cta a:hover{ color:var(--white); border-color:#5a5a5a; }
+  .sidebar-cta a.primary{ background:#0e639c; border-color:#0e639c; color:#fff; }
+  .sidebar-cta a.primary:hover{ background:#1177bb; }
+
+  /* tabs */
+  .tabs{
+    display:flex;
+    background:var(--bg-tab);
+    border-bottom:1px solid var(--border);
+    overflow-x:auto;
+  }
+  .tab{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 16px;
+    font-size:12.5px;
+    color:var(--text-dim);
+    border-right:1px solid var(--border);
+    white-space:nowrap;
+  }
+  .tab.active{ background:var(--bg-tab-active); color:var(--white); }
+  .tab .dot{ width:6px; height:6px; border-radius:50%; flex:none; }
+
+  /* main pane */
+  .main{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .pane{
+    flex:1;
+    position:relative;
+    overflow-y:auto;
+    overflow-x:auto;
+    padding:22px 0 40px;
+  }
+  .codeblock{ display:table; width:100%; }
+  .cline{ display:table-row; }
+  .cline .ln{
+    display:table-cell;
+    width:46px;
+    text-align:right;
+    padding-right:18px;
+    color:var(--linenum);
+    font-size:12.5px;
+    user-select:none;
+    vertical-align:top;
+  }
+  .cline .code{
+    display:table-cell;
+    padding-left:6px;
+    font-size:13px;
+    line-height:21px;
+    white-space:pre-wrap;
+    vertical-align:top;
+  }
+  .kw{ color:var(--c-keyword); }
+  .str{ color:var(--c-string); }
+  .cm{ color:var(--c-comment); }
+  .fn{ color:var(--c-func); }
+  .prop{ color:var(--c-prop); }
+  .ty{ color:var(--c-type); }
+  .cn{ color:var(--c-const); }
+  .num{ color:var(--c-num); }
+  .pu{ color:var(--c-punct); }
+  .sect-gap{ height:14px; }
+
+  a.inline-link{ color:var(--c-const); text-decoration:none; border-bottom:1px dotted rgba(79,193,255,.5); }
+  a.inline-link:hover{ border-bottom-style:solid; }
+
+  /* status bar */
+  .statusbar{
+    background:var(--bg-status);
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    font-size:11.5px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:5px 14px;
+  }
+  .statusbar .left, .statusbar .right{ display:flex; align-items:center; gap:16px; }
+  .statusbar a{ color:#fff; text-decoration:none; opacity:.92; }
+  .statusbar a:hover{ opacity:1; text-decoration:underline; }
+
+  @media (max-width:860px){
+    .sidebar{ display:none; }
+    body{ padding:0; }
+    .editor{ border-radius:0; max-width:100%; }
+    .body-row{ height:calc(100vh - 84px); }
+  }
+  @media (max-width:480px){
+    .statusbar{ font-size:10.5px; padding:5px 10px; }
+    .statusbar .left, .statusbar .right{ gap:8px; }
+    .statusbar .left span:nth-child(2){ display:none; }
+    .titlebar-title{ font-size:10.5px; }
+    .titlebar-actions a{ padding:3px 7px; font-size:10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="editor">
+  <div class="titlebar">
+    <div class="traffic"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+    <div class="titlebar-title">cv — ruterana-gloire — Visual Studio Code</div>
+    <div class="titlebar-actions">
+      <a href="cv.pdf" target="_blank" rel="noopener">Classic CV ↗</a>
+      <a href="index.html">← Site</a>
+    </div>
+  </div>
+
+  <div class="body-row">
+    <aside class="sidebar">
+      <div class="sidebar-label">EXPLORER · CV</div>
+      <ul class="file-list">
+        <li><a href="#profile" class="active"><span class="dot dot-md"></span>profile.md</a></li>
+        <li><a href="#experience"><span class="dot dot-js"></span>experience.js</a></li>
+        <li><a href="#projects"><span class="dot dot-js"></span>projects.js</a></li>
+        <li><a href="#education"><span class="dot dot-json"></span>education.json</a></li>
+        <li><a href="#skills"><span class="dot dot-json"></span>skills.json</a></li>
+        <li><a href="#contact"><span class="dot dot-env"></span>contact.env</a></li>
+      </ul>
+      <div class="sidebar-cta">
+        <a class="primary" href="https://www.linkedin.com/in/ruterana-gloire-06a904423/" target="_blank" rel="noopener">Hire me ↗</a>
+        <a href="cv.pdf" target="_blank" rel="noopener">Download classic CV</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="tabs">
+        <div class="tab active"><span class="dot dot-md"></span>profile.md</div>
+        <div class="tab"><span class="dot dot-js"></span>experience.js</div>
+        <div class="tab"><span class="dot dot-js"></span>projects.js</div>
+        <div class="tab"><span class="dot dot-json"></span>education.json</div>
+        <div class="tab"><span class="dot dot-json"></span>skills.json</div>
+        <div class="tab"><span class="dot dot-env"></span>contact.env</div>
+      </div>
+
+      <div class="pane">
+        <div class="codeblock">
+
+<div class="sect-gap" id="profile" style="height:0;"></div>
+<div class="cline"><span class="ln">1</span><span class="code"><span class="cm"># profile.md</span></span></div>
+<div class="cline"><span class="ln">2</span><span class="code"></span></div>
+<div class="cline"><span class="ln">3</span><span class="code"><span class="pu">## </span><span class="fn">Ruterana Gloire</span></span></div>
+<div class="cline"><span class="ln">4</span><span class="code">Software Engineer <span class="pu">·</span> Full-Stack Web Developer <span class="pu">·</span> IT Consultant</span></div>
+<div class="cline"><span class="ln">5</span><span class="code">Kigali, Rwanda</span></div>
+<div class="cline"><span class="ln">6</span><span class="code"></span></div>
+<div class="cline"><span class="ln">7</span><span class="code">Final-year Software Engineering student at the Adventist University of Central</span></div>
+<div class="cline"><span class="ln">8</span><span class="code">Africa (AUCA), working toward a Bachelor of Information Technology with Honours.</span></div>
+<div class="cline"><span class="ln">9</span><span class="code">Focused on full-stack web development, databases, software testing, and</span></div>
+<div class="cline"><span class="ln">10</span><span class="code">process automation — building things end to end and reasoning through problems</span></div>
+<div class="cline"><span class="ln">11</span><span class="code">methodically rather than guessing. Takes on freelance web projects and remote</span></div>
+<div class="cline"><span class="ln">12</span><span class="code">IT consulting alongside coursework.</span></div>
+<div class="cline"><span class="ln">13</span><span class="code"></span></div>
+<div class="cline"><span class="ln">14</span><span class="code"><span class="cm">&gt; TODO: finish adaptive traffic-light simulation (final-year project)</span></span></div>
+
+<div class="sect-gap" id="experience"></div>
+<div class="cline"><span class="ln">1</span><span class="code"><span class="cm">// experience.js</span></span></div>
+<div class="cline"><span class="ln">2</span><span class="code"><span class="kw">const</span> <span class="prop">experience</span> <span class="pu">= [</span></span></div>
+<div class="cline"><span class="ln">3</span><span class="code">  <span class="pu">{</span></span></div>
+<div class="cline"><span class="ln">4</span><span class="code">    <span class="prop">role</span><span class="pu">:</span> <span class="str">"IT Consultant &amp; Developer"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">5</span><span class="code">    <span class="prop">company</span><span class="pu">:</span> <span class="str">"Osteopaths Without Borders"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">6</span><span class="code">    <span class="prop">type</span><span class="pu">:</span> <span class="str">"Volunteer · Remote"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">7</span><span class="code">    <span class="prop">period</span><span class="pu">:</span> <span class="str">"Ongoing"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">8</span><span class="code">    <span class="prop">summary</span><span class="pu">:</span> <span class="str">"Volunteering remotely as an IT consultant and developer,</span></span></div>
+<div class="cline"><span class="ln">9</span><span class="code">      <span class="str">supporting the org's technology needs — advising on and building</span></span></div>
+<div class="cline"><span class="ln">10</span><span class="code">      <span class="str">software solutions that help the team run more efficiently."</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">11</span><span class="code">  <span class="pu">},</span></span></div>
+<div class="cline"><span class="ln">12</span><span class="code">  <span class="pu">{</span></span></div>
+<div class="cline"><span class="ln">13</span><span class="code">    <span class="prop">role</span><span class="pu">:</span> <span class="str">"Software Development Intern"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">14</span><span class="code">    <span class="prop">company</span><span class="pu">:</span> <span class="str">"Rwanda Airports Company (RAC)"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">15</span><span class="code">    <span class="prop">type</span><span class="pu">:</span> <span class="str">"Internship"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">16</span><span class="code">    <span class="prop">summary</span><span class="pu">:</span> <span class="str">"Worked alongside the dev team on internal software tasks —</span></span></div>
+<div class="cline"><span class="ln">17</span><span class="code">      <span class="str">writing and debugging code, and turning requirements into working</span></span></div>
+<div class="cline"><span class="ln">18</span><span class="code">      <span class="str">features in a production environment. Built an email automation</span></span></div>
+<div class="cline"><span class="ln">19</span><span class="code">      <span class="str">system that removed manual, repetitive work from the team's day."</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">20</span><span class="code">  <span class="pu">}</span></span></div>
+<div class="cline"><span class="ln">21</span><span class="code"><span class="pu">];</span></span></div>
+
+<div class="sect-gap" id="projects"></div>
+<div class="cline"><span class="ln">1</span><span class="code"><span class="cm">// projects.js — selected work</span></span></div>
+<div class="cline"><span class="ln">2</span><span class="code"><span class="kw">const</span> <span class="prop">projects</span> <span class="pu">= [</span></span></div>
+<div class="cline"><span class="ln">3</span><span class="code">  <span class="pu">{</span> <span class="prop">name</span><span class="pu">:</span> <span class="str">"Adaptive Traffic Light Simulation"</span><span class="pu">,</span> <span class="prop">stack</span><span class="pu">:</span> <span class="str">"Python, SUMO, TraCI"</span> <span class="pu">},</span></span></div>
+<div class="cline"><span class="ln">4</span><span class="code">  <span class="pu">{</span> <span class="prop">name</span><span class="pu">:</span> <span class="str">"Mental Health Support System"</span><span class="pu">,</span> <span class="prop">stack</span><span class="pu">:</span> <span class="str">"Java, Spring Boot, MySQL"</span> <span class="pu">},</span></span></div>
+<div class="cline"><span class="ln">5</span><span class="code">  <span class="pu">{</span> <span class="prop">name</span><span class="pu">:</span> <span class="str">"Email Automation System"</span><span class="pu">,</span> <span class="prop">stack</span><span class="pu">:</span> <span class="str">"Python, APIs, Scripting"</span> <span class="pu">},</span></span></div>
+<div class="cline"><span class="ln">6</span><span class="code">  <span class="pu">{</span> <span class="prop">name</span><span class="pu">:</span> <span class="str">"Emma Tranier — Practitioner Website"</span><span class="pu">,</span> <span class="prop">stack</span><span class="pu">:</span> <span class="str">"HTML, CSS, JS"</span> <span class="pu">},</span></span></div>
+<div class="cline"><span class="ln">7</span><span class="code"><span class="pu">];</span></span></div>
+<div class="cline"><span class="ln">8</span><span class="code"></span></div>
+<div class="cline"><span class="ln">9</span><span class="code"><span class="cm">// full write-ups: </span><a class="inline-link" href="work.html"><span class="cm">ruterana.dev/work.html</span></a></span></div>
+
+<div class="sect-gap" id="education"></div>
+<div class="cline"><span class="ln">1</span><span class="code"><span class="pu">{</span></span></div>
+<div class="cline"><span class="ln">2</span><span class="code">  <span class="prop">"education"</span><span class="pu">:</span> <span class="pu">[</span></span></div>
+<div class="cline"><span class="ln">3</span><span class="code">    <span class="pu">{</span></span></div>
+<div class="cline"><span class="ln">4</span><span class="code">      <span class="prop">"degree"</span><span class="pu">:</span> <span class="str">"BSc Information Technology (Honours), Software Engineering"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">5</span><span class="code">      <span class="prop">"school"</span><span class="pu">:</span> <span class="str">"Adventist University of Central Africa (AUCA)"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">6</span><span class="code">      <span class="prop">"period"</span><span class="pu">:</span> <span class="str">"2022 — Present"</span></span></div>
+<div class="cline"><span class="ln">7</span><span class="code">    <span class="pu">},</span></span></div>
+<div class="cline"><span class="ln">8</span><span class="code">    <span class="pu">{</span></span></div>
+<div class="cline"><span class="ln">9</span><span class="code">      <span class="prop">"degree"</span><span class="pu">:</span> <span class="str">"Software Development"</span><span class="pu">,</span></span></div>
+<div class="cline"><span class="ln">10</span><span class="code">      <span class="prop">"school"</span><span class="pu">:</span> <span class="str">"Secondary school studies"</span></span></div>
+<div class="cline"><span class="ln">11</span><span class="code">    <span class="pu">}</span></span></div>
+<div class="cline"><span class="ln">12</span><span class="code">  <span class="pu">]</span></span></div>
+<div class="cline"><span class="ln">13</span><span class="code"><span class="pu">}</span></span></div>
+
+<div class="sect-gap" id="skills"></div>
+<div class="cline"><span class="ln">1</span><span class="code"><span class="pu">{</span></span></div>
+<div class="cline"><span class="ln">2</span><span class="code">  <span class="prop">"languages"</span><span class="pu">:</span> <span class="pu">[</span><span class="str">"HTML"</span><span class="pu">,</span> <span class="str">"CSS"</span><span class="pu">,</span> <span class="str">"JavaScript"</span><span class="pu">,</span> <span class="str">"Java"</span><span class="pu">,</span> <span class="str">"Python"</span><span class="pu">,</span> <span class="str">"PHP"</span><span class="pu">,</span> <span class="str">"SQL"</span><span class="pu">,</span> <span class="str">"PL/SQL"</span><span class="pu">,</span> <span class="str">"C"</span><span class="pu">,</span> <span class="str">"C++"</span><span class="pu">],</span></span></div>
+<div class="cline"><span class="ln">3</span><span class="code">  <span class="prop">"frontend"</span><span class="pu">:</span> <span class="pu">[</span><span class="str">"React"</span><span class="pu">,</span> <span class="str">"Vue.js"</span><span class="pu">,</span> <span class="str">"Vite"</span><span class="pu">,</span> <span class="str">"Pinia"</span><span class="pu">,</span> <span class="str">"Tailwind CSS"</span><span class="pu">],</span></span></div>
+<div class="cline"><span class="ln">4</span><span class="code">  <span class="prop">"backend"</span><span class="pu">:</span> <span class="pu">[</span><span class="str">"Node.js"</span><span class="pu">,</span> <span class="str">"Spring Boot"</span><span class="pu">,</span> <span class="str">"JDBC"</span><span class="pu">,</span> <span class="str">"Maven"</span><span class="pu">],</span></span></div>
+<div class="cline"><span class="ln">5</span><span class="code">  <span class="prop">"databases"</span><span class="pu">:</span> <span class="pu">[</span><span class="str">"MySQL"</span><span class="pu">,</span> <span class="str">"Oracle"</span><span class="pu">,</span> <span class="str">"MongoDB"</span><span class="pu">],</span></span></div>
+<div class="cline"><span class="ln">6</span><span class="code">  <span class="prop">"tools"</span><span class="pu">:</span> <span class="pu">[</span><span class="str">"Git"</span><span class="pu">,</span> <span class="str">"GitHub"</span><span class="pu">,</span> <span class="str">"Docker"</span><span class="pu">,</span> <span class="str">"Power BI"</span><span class="pu">,</span> <span class="str">"WordPress"</span><span class="pu">,</span> <span class="str">"Linux"</span><span class="pu">],</span></span></div>
+<div class="cline"><span class="ln">7</span><span class="code">  <span class="prop">"testing_qa"</span><span class="pu">:</span> <span class="pu">[</span><span class="str">"Test Planning"</span><span class="pu">,</span> <span class="str">"Test Case Design"</span><span class="pu">,</span> <span class="str">"Defect Tracking"</span><span class="pu">,</span> <span class="str">"Traceability Matrices"</span><span class="pu">],</span></span></div>
+<div class="cline"><span class="ln">8</span><span class="code">  <span class="prop">"automation"</span><span class="pu">:</span> <span class="pu">[</span><span class="str">"Workflow Automation"</span><span class="pu">,</span> <span class="str">"Email Automation"</span><span class="pu">,</span> <span class="str">"Scripting"</span><span class="pu">,</span> <span class="str">"API Integration"</span><span class="pu">]</span></span></div>
+<div class="cline"><span class="ln">9</span><span class="code"><span class="pu">}</span></span></div>
+
+<div class="sect-gap" id="contact"></div>
+<div class="cline"><span class="ln">1</span><span class="code"><span class="cm"># contact.env</span></span></div>
+<div class="cline"><span class="ln">2</span><span class="code"><span class="cn">NAME</span><span class="pu">=</span><span class="str">"Ruterana Gloire"</span></span></div>
+<div class="cline"><span class="ln">3</span><span class="code"><span class="cn">LOCATION</span><span class="pu">=</span><span class="str">"Kigali, Rwanda"</span></span></div>
+<div class="cline"><span class="ln">4</span><span class="code"><span class="cn">EMAIL</span><span class="pu">=</span><a class="inline-link" href="mailto:ruterana47@gmail.com"><span class="str">"ruterana47@gmail.com"</span></a></span></div>
+<div class="cline"><span class="ln">5</span><span class="code"><span class="cn">GITHUB</span><span class="pu">=</span><a class="inline-link" href="https://github.com/aldoglory" target="_blank" rel="noopener"><span class="str">"github.com/aldoglory"</span></a></span></div>
+<div class="cline"><span class="ln">6</span><span class="code"><span class="cn">LINKEDIN</span><span class="pu">=</span><a class="inline-link" href="https://www.linkedin.com/in/ruterana-gloire-06a904423/" target="_blank" rel="noopener"><span class="str">"linkedin.com/in/ruterana-gloire-06a904423"</span></a></span></div>
+<div class="cline"><span class="ln">7</span><span class="code"><span class="cn">STATUS</span><span class="pu">=</span><span class="str">"open_to_opportunities"</span></span></div>
+
+<div style="height:420px;" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="statusbar">
+        <div class="left">
+          <span>⎇ main*</span>
+          <span>✓ no problems</span>
+        </div>
+        <div class="right">
+          <span>UTF-8</span>
+          <span>LF</span>
+          <a href="cv.pdf" target="_blank" rel="noopener">Classic CV ↗</a>
+          <a href="index.html">Back to site</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // active-file highlighting on scroll + click
+  const links = document.querySelectorAll('.file-list a');
+  const tabs = document.querySelectorAll('.tab');
+  const targets = ['profile','experience','projects','education','skills','contact']
+    .map(id => document.getElementById(id));
+
+  function setActive(idx){
+    links.forEach((a,i) => a.classList.toggle('active', i === idx));
+    tabs.forEach((t,i) => t.classList.toggle('active', i === idx));
+  }
+
+  links.forEach((a, i) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActive(i);
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if(el){
+        const pane = document.querySelector('.pane');
+        pane.scrollTo({ top: el.offsetTop - 12, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const pane = document.querySelector('.pane');
+  pane.addEventListener('scroll', () => {
+    let idx = 0;
+    targets.forEach((el, i) => {
+      if(el.offsetTop - 60 <= pane.scrollTop) idx = i;
+    });
+    setActive(idx);
+  }, { passive: true });
+</script>
+
+</body>
+</html>

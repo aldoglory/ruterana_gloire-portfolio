@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="view-transition" content="same-origin">
+<title>Work — Ruterana Gloire</title>
+<meta name="description" content="Selected projects by Ruterana Gloire.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="page-header wrap">
+  <div class="ph-row">
+    <a class="mark" href="index.html">Ruterana Gloire</a>
+    <div class="ph-controls">
+      <a class="btn btn-primary" href="https://www.linkedin.com/in/ruterana-gloire-06a904423/" target="_blank" rel="noopener">Hire me</a>
+      <a class="btn btn-outline js-view-cv" href="cv.pdf" target="_blank" rel="noopener">View CV</a>
+      
+      <button class="toggle" id="cmdkTrigger" aria-label="Open command menu">
+        <span class="dot"></span>Jump to <kbd>⌘K</kbd>
+      </button>
+      <button class="toggle" id="themeToggle" aria-label="Toggle color theme">
+        <span class="dot"></span><span id="themeLabel">dark</span>
+      </button>
+    </div>
+  </div>
+  <nav class="main">
+    <ol>
+      <li><a href="about.html">About</a></li>
+      <li><a href="experience.html">Experience</a></li>
+      <li><a href="work.html" class="is-active">Work</a></li>
+      <li><a href="education.html">Education</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ol>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="page-intro">
+    <div class="kicker">Selected work</div>
+    <h1 class="page-title">A few things I've built.</h1>
+  </div>
+
+  <section class="first">
+    <div class="project">
+      <div>
+        <h3>VS Code-Inspired Portfolio</h3>
+        <div class="stack">HTML, CSS, JavaScript · Work in progress</div>
+      </div>
+      <div>
+        <p>An ongoing portfolio experiment inspired by the VS Code interface, exploring how an editor-style layout can present projects and personal work in a more interactive way.</p>
+        <p class="learned"><a href="https://aldoglory.github.io/vs-code-inspired-Portfolio-/" target="_blank" rel="noopener">View the work-in-progress portfolio ↗</a></p>
+      </div>
+    </div>
+
+    <div class="project">
+      <div>
+        <h3>Adaptive Traffic Light Simulation</h3>
+        <div class="stack">Python, SUMO, TraCI</div>
+      </div>
+      <div>
+        <p>My final-year project: a simulation that compares a standard fixed-timer traffic light system against a density-based adaptive algorithm. The adaptive system reads live traffic density from the simulation and adjusts signal timing accordingly, with a three-level priority system that can also grant precedence to emergency vehicles.</p>
+        <p class="learned">What it taught me: working with simulation environments and real-time decision logic, and thinking carefully about how a system should behave under competing priorities rather than a single fixed rule.</p>
+      </div>
+    </div>
+
+    <div class="project">
+      <div>
+        <h3>Mental Health Support System</h3>
+        <div class="stack">Java, Spring Boot, MySQL</div>
+      </div>
+      <div>
+        <p>A backend-focused academic project built to support users seeking mental health resources and guidance, structured around a Spring Boot API with a MySQL database. The goal was a system that could reliably manage user data and support content while staying straightforward to extend.</p>
+        <p class="learned">What it taught me: structuring a Spring Boot application properly, and designing a database schema for a domain that has to be handled carefully and accurately.</p>
+      </div>
+    </div>
+
+    <div class="project">
+      <div>
+        <h3>Email Automation System</h3>
+        <div class="stack">Python, APIs, Scripting</div>
+      </div>
+      <div>
+        <p>Built during my internship at Rwanda Airports Company (RAC): a system that automated recurring email workflows, cutting out manual, repetitive sending and formatting so the team could focus on higher-value work. Covered templating, scheduling, and reliable delivery of routine communications.</p>
+        <p class="learned">What it taught me: how much time a small piece of automation can save in a real organization, and how to design a script that others on the team could trust and reuse without babysitting it.</p>
+      </div>
+    </div>
+
+    <div class="project">
+      <div>
+        <h3>Emma Tranier — Practitioner Website</h3>
+        <div class="stack">HTML, CSS, JavaScript</div>
+      </div>
+      <div>
+        <p>A freelance, multi-page website for Emma Tranier, a manual osteopathic practitioner in Kingston, Ontario — built with plain HTML, CSS, and JavaScript and no frameworks, covering her homepage, About page, an explainer on osteopathy, FAQs, and a privacy policy.</p>
+        <p class="learned">What it taught me: working directly with a real client, keeping a consistent design system across several pages, and handling the small details of responsiveness that only show up once real people are using a site on real devices.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div>Ruterana Gloire</div>
+  <div>Kigali, Rwanda</div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
